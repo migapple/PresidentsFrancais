@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <!-- App name -->
+  <key>CFBundleDisplayName</key>
+  <string>Présidents République</string>
+
+  <key>CFBundleName</key>
+  <string>PresidentsRepublique</string>
+
+  <key>CFBundleIdentifier</key>
+  <string>com.michel.garlandat.presidentsrepublique</string>
+
+  <key>CFBundleVersion</key>
+  <string>1</string>
+
+  <key>CFBundleShortVersionString</key>
+  <string>1.0</string>
+
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+
+  <key>CFBundleExecutable</key>
+  <string>App</string>
+
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+
+  <!-- iOS deployment -->
+  <key>MinimumOSVersion</key>
+  <string>14.0</string>
+
+  <key>LSRequiresIPhoneOS</key>
+  <true/>
+
+  <!-- Orientations -->
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+  </array>
+
+  <!-- Status bar -->
+  <key>UIStatusBarStyle</key>
+  <string>UIStatusBarStyleLightContent</string>
+  <key>UIViewControllerBasedStatusBarAppearance</key>
+  <false/>
+
+  <!-- Safe area / notch -->
+  <key>UIRequiresFullScreen</key>
+  <true/>
+
+  <!-- Réseau — accès Wikipedia pour les portraits -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+  </dict>
+
+  <!-- Privacy manifest — aucune permission spéciale requise -->
+  <!-- Pas de caméra, pas de micro, pas de localisation -->
+
+  <!-- Export compliance -->
+  <key>ITSAppUsesNonExemptEncryption</key>
+  <false/>
+
+</dict>
+</plist>

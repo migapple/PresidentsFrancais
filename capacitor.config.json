@@ -1,0 +1,16 @@
+{
+  "appId": "com.michel.garlandat.presidentsrepublique",
+  "appName": "Présidents République",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "always"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}

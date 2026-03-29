@@ -1,0 +1,21 @@
+{
+  "name": "presidents-republique",
+  "version": "1.0.0",
+  "description": "Présidents de la République Française",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build step'",
+    "sync": "npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/keyboard": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
