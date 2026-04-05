@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr" style="background:#050D1A">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Présidents de la République</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"></noscript>
+<style>
+  :root {
+    --gold: #C9993A;
+    --gold-light: #E8C76A;
+    --gold-pale: #F5E8C0;
+    --ink: #050D1A;
+    --parchment: #E8F0FA;
+    --rep-ii:  #7A2FA0;
+    --rep-iii: #1A3E7A;
+    --rep-iv:  #1A6B50;
+    --rep-v:   #9B1C1C;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--ink);
+    color: var(--parchment);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg, #020810 0%, #050D1A 100%);
+    border-bottom: 1px solid rgba(201,153,58,0.3);
+    padding: calc(var(--safe-top) + 10px) 16px 12px;
+  }
+  .header-top { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:6px; }
+  .tri { font-size:16px; color:var(--gold); opacity:0.7; }
+  header h1 {
+    font-family:'IM Fell English',serif; font-size:24px; letter-spacing:0.04em;
+    background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 40%,var(--gold-pale) 70%,var(--gold) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;
+  }
+  .subtitle { text-align:center; font-size:11px; letter-spacing:0.25em; text-transform:uppercase; color:rgba(201,153,58,0.45); margin-bottom:10px; font-style:italic; }
+
+  .search-wrap { position:relative; margin-bottom:8px; }
+  .search-wrap input {
+    width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(201,153,58,0.25); border-radius:8px;
+    padding:8px 12px 8px 34px; color:var(--parchment); font-family:'Cormorant Garamond',serif; font-size:15px; outline:none; transition:border-color .2s;
+  }
+  .search-wrap input::placeholder { color:rgba(232,240,250,0.3); font-style:italic; }
+  .search-wrap input:focus { border-color:var(--gold); }
+  .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:rgba(201,153,58,0.5); font-size:14px; pointer-events:none; }
+
+  .rep-filters { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  .rep-filters::-webkit-scrollbar { display:none; }
+  .pill {
+    flex-shrink:0; padding:4px 11px; border-radius:20px; font-size:11px; letter-spacing:0.08em;
+    font-family:'Cormorant Garamond',serif; cursor:pointer; border:1px solid transparent;
+    transition:all .2s; user-select:none; -webkit-user-select:none;
+  }
+  .pill.all { background:rgba(201,153,58,0.12); border-color:rgba(201,153,58,0.35); color:var(--gold-light); }
+  .pill.all.active { background:var(--gold); color:var(--ink); border-color:var(--gold); font-weight:600; }
+  .pill[data-rep="IIe République"]  { background:rgba(122,47,160,0.12); border-color:rgba(122,47,160,0.35); color:#D4A0F5; }
+  .pill[data-rep="IIe République"].active  { background:var(--rep-ii); color:#fff; border-color:var(--rep-ii); }
+  .pill[data-rep="IIIe République"] { background:rgba(26,62,122,0.12); border-color:rgba(26,62,122,0.35); color:#7EB0E3; }
+  .pill[data-rep="IIIe République"].active { background:var(--rep-iii); color:#fff; border-color:var(--rep-iii); }
+  .pill[data-rep="IVe République"]  { background:rgba(26,107,80,0.12); border-color:rgba(26,107,80,0.35); color:#80E0C0; }
+  .pill[data-rep="IVe République"].active  { background:var(--rep-iv); color:#fff; border-color:var(--rep-iv); }
+  .pill[data-rep="Ve République"]   { background:rgba(155,28,28,0.12); border-color:rgba(155,28,28,0.35); color:#F5A0A0; }
+  .pill[data-rep="Ve République"].active   { background:var(--rep-v); color:#fff; border-color:var(--rep-v); }
+
+  .count-bar { padding:7px 16px; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(201,153,58,0.4); border-bottom:1px solid rgba(201,153,58,0.07); }
+
+  .pres-list { padding:8px 12px calc(var(--safe-bot) + 20px); }
+  .rep-section { margin-bottom:4px; }
+  .rep-header { display:flex; align-items:center; gap:8px; padding:14px 4px 8px; }
+  .rep-line { flex:1; height:1px; background:rgba(201,153,58,0.1); }
+  .rep-label { font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(201,153,58,0.38); font-style:italic; }
+
+  .pres-card {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 14px;
+    background:rgba(255,255,255,0.025); border:1px solid rgba(201,153,58,0.1);
+    border-radius:12px; margin-bottom:8px; cursor:pointer;
+    transition:all .2s; position:relative; overflow:hidden;
+    animation:fadeUp .35s ease both;
+  }
+  .pres-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+  .pres-card[data-rep="IIe République"]::before  { background:var(--rep-ii); }
+  .pres-card[data-rep="IIIe République"]::before { background:var(--rep-iii); }
+  .pres-card[data-rep="IVe République"]::before  { background:var(--rep-iv); }
+  .pres-card[data-rep="Ve République"]::before   { background:var(--rep-v); }
+  .pres-card:active { transform:scale(0.985); background:rgba(255,255,255,0.05); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── Portrait thumbnail ── */
+  .portrait-wrap {
+    width:62px; height:72px; border-radius:8px;
+    border:1px solid rgba(201,153,58,0.2); flex-shrink:0;
+    overflow:hidden; background:rgba(255,255,255,0.04);
+    position:relative;
+  }
+  .portrait-wrap img {
+    width:100%; height:100%; object-fit:cover; object-position:top center;
+    display:block; opacity:0; transition:opacity .4s; position:relative; z-index:1;
+  }
+  .portrait-wrap img.loaded { opacity:1; }
+  .portrait-placeholder {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:26px; color:rgba(201,153,58,0.22); z-index:0;
+  }
+
+  .pres-info { flex:1; min-width:0; }
+  .pres-num { font-size:10px; letter-spacing:0.15em; color:rgba(201,153,58,0.38); text-transform:uppercase; margin-bottom:2px; }
+  .pres-name { font-family:'IM Fell English',serif; font-size:17px; color:var(--parchment); line-height:1.2; margin-bottom:3px; }
+  .pres-epithet { font-style:italic; font-size:13px; color:var(--gold); margin-bottom:4px; opacity:0.85; }
+  .pres-mandat { font-size:12px; color:rgba(232,240,250,0.45); }
+  .pres-mandat span { display:inline-block; background:rgba(201,153,58,0.09); border:1px solid rgba(201,153,58,0.18); border-radius:4px; padding:1px 6px; }
+  .pres-arrow { color:rgba(201,153,58,0.28); font-size:14px; flex-shrink:0; }
+
+  /* ── Modal ── */
+  .modal-backdrop {
+    position:fixed; inset:0; background:rgba(2,5,12,0.88); backdrop-filter:blur(6px);
+    z-index:200; display:flex; align-items:flex-end;
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .modal-backdrop.open { opacity:1; pointer-events:all; }
+  .modal {
+    width:100%; background:linear-gradient(180deg,#0A1520 0%,#060E18 100%);
+    border-top:1px solid rgba(201,153,58,0.3); border-radius:20px 20px 0 0;
+    padding:0 0 calc(var(--safe-bot) + 24px);
+    transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+    max-height:88vh; overflow-y:auto;
+  }
+  .modal-backdrop.open .modal { transform:translateY(0); }
+  .modal-handle { width:40px; height:4px; background:rgba(201,153,58,0.28); border-radius:2px; margin:12px auto 0; }
+
+  .modal-portrait-wrap {
+    position:relative; height:240px; overflow:hidden; background:#040A14;
+  }
+  .modal-portrait-wrap::after {
+    content:''; position:absolute; bottom:0; left:0; right:0;
+    height:80px; background:linear-gradient(transparent,#0A1520); z-index:2;
+  }
+  .modal-portrait-wrap img {
+    width:100%; height:100%; object-fit:cover; object-position:top center;
+    opacity:0; transition:opacity .5s; position:relative; z-index:1;
+  }
+  .modal-portrait-wrap img.loaded { opacity:0.85; }
+  .modal-portrait-placeholder {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:72px; opacity:0.18; z-index:0;
+  }
+  .modal-img-loading {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:3;
+  }
+  .spinner {
+    width:28px; height:28px; border:2px solid rgba(201,153,58,0.15);
+    border-top-color:rgba(201,153,58,0.55); border-radius:50%;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .modal-body { padding:0 20px; position:relative; z-index:2; margin-top:-20px; }
+  .modal-rep-badge {
+    display:inline-block; font-size:10px; letter-spacing:0.25em;
+    text-transform:uppercase; padding:3px 10px; border-radius:20px; margin-bottom:10px; border:1px solid;
+  }
+  .modal-name { font-family:'IM Fell English',serif; font-size:28px; line-height:1.1; color:var(--parchment); margin-bottom:4px; }
+  .modal-epithet { font-style:italic; font-size:17px; color:var(--gold); margin-bottom:16px; }
+  .modal-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .stat-box { background:rgba(255,255,255,0.04); border:1px solid rgba(201,153,58,0.13); border-radius:10px; padding:10px 12px; }
+  .stat-label { font-size:9px; letter-spacing:0.25em; text-transform:uppercase; color:rgba(201,153,58,0.42); margin-bottom:4px; }
+  .stat-value { font-size:15px; color:var(--parchment); font-weight:300; }
+  .modal-desc { font-size:14.5px; line-height:1.7; color:rgba(232,240,250,0.68); font-style:italic; border-left:2px solid rgba(201,153,58,0.22); padding-left:14px; margin-bottom:16px; }
+  .modal-close {
+    width:100%; padding:12px; background:rgba(201,153,58,0.1); border:1px solid rgba(201,153,58,0.25);
+    border-radius:10px; color:var(--gold-light); font-family:'Cormorant Garamond',serif;
+    font-size:15px; letter-spacing:0.1em; cursor:pointer; transition:background .2s;
+  }
+  .modal-close:active { background:rgba(201,153,58,0.2); }
+
+  .empty { text-align:center; padding:60px 20px; color:rgba(201,153,58,0.28); font-style:italic; font-size:16px; }
+  .empty span { font-size:36px; display:block; margin-bottom:12px; }
+
+  ::-webkit-scrollbar { width:3px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(201,153,58,0.22); border-radius:2px; }
+
+  /* ── Gear button ── */
+  .btn-gear {
+    position:absolute; right:16px; top:calc(var(--safe-top) + 10px);
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(201,153,58,0.1); border:1px solid rgba(201,153,58,0.25);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .2s;
+    color:rgba(201,153,58,0.7); font-size:18px;
+    -webkit-user-select:none; user-select:none;
+  }
+  .btn-gear:active { background:rgba(201,153,58,0.22); transform:rotate(45deg); }
+
+  /* ── Settings modal ── */
+  .settings-backdrop {
+    position:fixed; inset:0; background:rgba(2,5,12,0.92);
+    backdrop-filter:blur(6px); z-index:300;
+    display:flex; align-items:flex-end;
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .settings-backdrop.open { opacity:1; pointer-events:all; }
+  .settings-sheet {
+    width:100%; background:linear-gradient(180deg,#0A1520 0%,#060E18 100%);
+    border-top:1px solid rgba(201,153,58,0.35); border-radius:20px 20px 0 0;
+    padding:0 0 calc(var(--safe-bot) + 28px);
+    transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+    max-height:92vh; overflow-y:auto;
+  }
+  .settings-backdrop.open .settings-sheet { transform:translateY(0); }
+
+  .settings-handle { width:40px; height:4px; background:rgba(201,153,58,0.28); border-radius:2px; margin:12px auto 20px; cursor:pointer; }
+
+  .settings-app-id {
+    display:flex; flex-direction:column; align-items:center;
+    padding:0 20px 20px; border-bottom:1px solid rgba(201,153,58,0.1);
+  }
+  .settings-app-icon {
+    width:64px; height:64px; border-radius:16px;
+    background:linear-gradient(135deg,#0A1E3A,#050D1A);
+    border:1px solid rgba(201,153,58,0.35);
+    display:flex; align-items:center; justify-content:center;
+    font-size:32px; margin-bottom:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  }
+  .settings-app-name {
+    font-family:'IM Fell English',serif; font-size:18px;
+    background:linear-gradient(135deg,var(--gold-light),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:4px; text-align:center;
+  }
+  .settings-version {
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:rgba(201,153,58,0.4); font-style:italic;
+  }
+
+  .settings-section-title {
+    font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
+    color:rgba(201,153,58,0.38); padding:18px 20px 8px;
+    font-style:italic;
+  }
+
+  .app-row {
+    display:flex; align-items:center; gap:14px;
+    padding:11px 20px; cursor:pointer; transition:background .15s;
+  }
+  .app-row:active { background:rgba(255,255,255,0.04); }
+  .app-row-icon {
+    width:46px; height:46px; border-radius:11px; flex-shrink:0;
+    border:1px solid rgba(201,153,58,0.2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; background:rgba(255,255,255,0.04);
+  }
+  .app-row-info { flex:1; min-width:0; }
+  .app-row-name { font-family:'IM Fell English',serif; font-size:15px; color:var(--parchment); margin-bottom:2px; }
+  .app-row-desc { font-size:12px; color:rgba(232,240,250,0.45); font-style:italic; }
+  .app-row-arrow { color:rgba(201,153,58,0.3); font-size:14px; }
+
+  .settings-divider { height:1px; background:rgba(201,153,58,0.08); margin:0 20px; }
+
+  .settings-copyright {
+    margin:20px 20px 0;
+    background:rgba(255,255,255,0.03); border:1px solid rgba(201,153,58,0.1);
+    border-radius:12px; padding:14px 16px; text-align:center;
+  }
+  .settings-copyright p { font-size:12px; color:rgba(232,240,250,0.38); line-height:1.7; font-style:italic; }
+  .settings-copyright strong { color:rgba(201,153,58,0.6); font-weight:500; }
+  .settings-claude-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:10px; padding:5px 12px; border-radius:20px;
+    background:rgba(100,80,200,0.12); border:1px solid rgba(100,80,200,0.3);
+    font-size:11px; color:rgba(180,160,255,0.7); letter-spacing:0.05em;
+  }
+  .settings-close {
+    width:calc(100% - 40px); margin:16px 20px 0;
+    padding:12px; background:rgba(201,153,58,0.1); border:1px solid rgba(201,153,58,0.25);
+    border-radius:10px; color:var(--gold-light);
+    font-family:'Cormorant Garamond',serif; font-size:15px; letter-spacing:0.1em;
+    cursor:pointer; transition:background .2s;
+  }
+  .settings-close:active { background:rgba(201,153,58,0.2); }
+</style>
+</head>
+<body style="background:#050D1A">
+
+<header style="position:sticky;top:0;z-index:100">
+  <button class="btn-gear" onclick="openSettings()" aria-label="Paramètres">⚙</button>
+  <div class="header-top">
+    <h1>Présidents de la République</h1>
+  </div>
+  <p class="subtitle">1848 — présent · Chronologie républicaine</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Rechercher un président…" autocomplete="off">
+  </div>
+  <div class="rep-filters" id="repFilters"></div>
+</header>
+
+<div class="count-bar" id="countBar"></div>
+<div class="pres-list" id="presList"></div>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ⚙ SETTINGS -->
+<div class="settings-backdrop" id="settingsBackdrop" onclick="closeSettings(event)">
+  <div class="settings-sheet">
+    <div class="settings-handle" onclick="closeSettings()"></div>
+
+    <div class="settings-app-id">
+      <div class="settings-app-icon">🇫🇷</div>
+      <div class="settings-app-name">Présidents de la République</div>
+      <div class="settings-version">Version 1.0 &nbsp;·&nbsp; 25 présidents</div>
+    </div>
+
+    <div class="settings-section-title">Nos autres applications</div>
+
+    <div class="app-row" onclick="openAppStore('id_rois')">
+      <div class="app-row-icon">👑</div>
+      <div class="app-row-info">
+        <div class="app-row-name">Rois de France</div>
+        <div class="app-row-desc">De Clovis à Louis-Philippe · 481–1848</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6738601726')">
+      <div class="app-row-icon">🪦</div>
+      <div class="app-row-info">
+        <div class="app-row-name">Cimetières Paris</div>
+        <div class="app-row-desc">Guide des grands cimetières parisiens</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6743158361')">
+      <div class="app-row-icon">🏛</div>
+      <div class="app-row-info">
+        <div class="app-row-name">Musées Paris</div>
+        <div class="app-row-desc">Les musées de la capitale</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6504267617')">
+      <div class="app-row-icon">🍽</div>
+      <div class="app-row-info">
+        <div class="app-row-name">MesRestaurants</div>
+        <div class="app-row-desc">Vos restaurants favoris</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6478837462')">
+      <div class="app-row-icon">🍷</div>
+      <div class="app-row-info">
+        <div class="app-row-name">Cave Manager</div>
+        <div class="app-row-desc">Gérez votre cave à vin</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6476972965')">
+      <div class="app-row-icon">💊</div>
+      <div class="app-row-info">
+        <div class="app-row-name">MediManager</div>
+        <div class="app-row-desc">Suivi de vos médicaments</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+    <div class="settings-divider"></div>
+
+    <div class="app-row" onclick="openAppStore('id6478837462')">
+      <div class="app-row-icon">🥦</div>
+      <div class="app-row-info">
+        <div class="app-row-name">Frigo Manager</div>
+        <div class="app-row-desc">Zéro gaspillage alimentaire</div>
+      </div>
+      <div class="app-row-arrow">›</div>
+    </div>
+
+    <div class="settings-copyright">
+      <p>
+        <strong>© 2025 Michel Garlandat</strong><br>
+        Tous droits réservés<br>
+        Images : Wikimedia Commons (licence libre)
+      </p>
+      <div class="settings-claude-badge">
+        ✦ &nbsp;Conçu avec Claude · Anthropic
+      </div>
+    </div>
+
+    <button class="settings-close" onclick="closeSettings()">Fermer</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DONNÉES — PRÉSIDENTS DE LA RÉPUBLIQUE
+// ══════════════════════════════════════════════
+const PRESIDENTS = [
+
+  // ── IIe RÉPUBLIQUE ──
+  {id:1, name:"Louis-Napoléon Bonaparte", epithet:"le Prince-Président",
+   rep:"IIe République", start:1848, end:1852,
+   wikiTitle:"Louis-Napoléon_Bonaparte",
+   party:"Parti de l'Ordre",
+   desc:"Neveu de Napoléon Ier, élu président au suffrage universel en décembre 1848 avec 74 % des voix, il réalisa le coup d'État du 2 décembre 1851 avant de se proclamer Napoléon III, mettant fin à la IIe République.",
+   events:"Élection à 74 % (10 déc. 1848) · Coup d'État du 2 déc. 1851"},
+
+  // ── IIIe RÉPUBLIQUE ──
+  {id:2, name:"Adolphe Thiers", epithet:"le Libérateur du Territoire",
+   rep:"IIIe République", start:1871, end:1873,
+   wikiTitle:"Adolphe_Thiers",
+   party:"Centre gauche",
+   desc:"Premier président de la IIIe République, il écrasa la Commune de Paris (mai 1871) et négocia le paiement anticipé de l'indemnité de guerre prussienne, libérant le territoire national avant le délai prévu.",
+   events:"Semaine sanglante — Commune de Paris (mai 1871) · Libération du territoire (1873)"},
+
+  {id:3, name:"Patrice de Mac Mahon", epithet:"le Maréchal-Président",
+   rep:"IIIe République", start:1873, end:1879,
+   wikiTitle:"Patrice_de_Mac_Mahon",
+   party:"Ordre moral / Légitimiste",
+   desc:"Maréchal élu par l'Assemblée monarchiste pour favoriser une restauration royale, il tenta de reprendre la main sur le gouvernement lors de la crise du 16 mai 1877, mais dut se soumettre à la majorité républicaine.",
+   events:"Crise du 16 mai 1877 · « Se soumettre ou se démettre »"},
+
+  {id:4, name:"Jules Grévy", epithet:"",
+   rep:"IIIe République", start:1879, end:1887,
+   wikiTitle:"Jules_Grévy",
+   party:"Républicain",
+   desc:"Incarnation de la République parlementaire, il réduit volontairement le rôle présidentiel à une fonction honorifique. Son second mandat s'acheva dans le scandale : son gendre Wilson vendait des décorations de la Légion d'honneur.",
+   events:"Lois Ferry sur l'école laïque (1882) · Scandale Wilson (1887)"},
+
+  {id:5, name:"Sadi Carnot", epithet:"",
+   rep:"IIIe République", start:1887, end:1894,
+   wikiTitle:"Sadi_Carnot_(homme_politique)",
+   party:"Républicain",
+   desc:"Petit-fils de Lazare Carnot, il géra avec calme plusieurs crises politiques dont le boulangisme et le scandale de Panama. Il fut assassiné à Lyon par l'anarchiste italien Sante Geronimo Caserio.",
+   events:"Affaire Panama (1892) · Assassinat à Lyon (24 juin 1894)"},
+
+  {id:6, name:"Jean Casimir-Perier", epithet:"",
+   rep:"IIIe République", start:1894, end:1895,
+   wikiTitle:"Jean_Casimir-Perier",
+   party:"Centre gauche",
+   desc:"Président pendant seulement six mois, il démissionna en janvier 1895 face à l'impuissance de sa fonction et aux tensions liées aux débuts de l'Affaire Dreyfus, déplorant l'absence réelle de pouvoir présidentiel.",
+   events:"Début de l'Affaire Dreyfus (1894) · Démission (janv. 1895)"},
+
+  {id:7, name:"Félix Faure", epithet:"le Beau Félix",
+   rep:"IIIe République", start:1895, end:1899,
+   wikiTitle:"Félix_Faure",
+   party:"Républicain modéré",
+   desc:"Grand amateur de faste et de représentation, il mourut subitement à l'Élysée en pleine Affaire Dreyfus. Son décès précipita la révision du procès Dreyfus sous son successeur.",
+   events:"Affaire Dreyfus · Mort à l'Élysée (16 fév. 1899)"},
+
+  {id:8, name:"Émile Loubet", epithet:"",
+   rep:"IIIe République", start:1899, end:1906,
+   wikiTitle:"Émile_Loubet",
+   party:"Républicain radical",
+   desc:"Il soutint la révision de l'Affaire Dreyfus et gracia le capitaine. Son septennat vit l'Entente Cordiale avec le Royaume-Uni (1904) et la loi de séparation des Églises et de l'État (1905).",
+   events:"Réhabilitation de Dreyfus (1906) · Entente Cordiale (1904) · Loi de 1905"},
+
+  {id:9, name:"Armand Fallières", epithet:"",
+   rep:"IIIe République", start:1906, end:1913,
+   wikiTitle:"Armand_Fallières",
+   party:"Républicain radical",
+   desc:"Président bon enfant issu du Lot-et-Garonne, son mandat coïncida avec les crises marocaines et le renforcement des alliances qui conduiraient à la Première Guerre mondiale.",
+   events:"Crise d'Agadir (1911) · Triple Entente consolidée"},
+
+  {id:10, name:"Raymond Poincaré", epithet:"le Lorrain",
+   rep:"IIIe République", start:1913, end:1920,
+   wikiTitle:"Raymond_Poincaré",
+   party:"Centre gauche / Union nationale",
+   desc:"Président de guerre par excellence, il fut à Berlin lors de l'ultimatum autrichien de juillet 1914. Revenu précipitamment, il maintint la résolution française pendant les quatre ans du conflit.",
+   events:"Première Guerre mondiale (1914–1918) · Traité de Versailles (1919)"},
+
+  {id:11, name:"Paul Deschanel", epithet:"",
+   rep:"IIIe République", start:1920, end:1920,
+   wikiTitle:"Paul_Deschanel",
+   party:"Centre gauche",
+   desc:"Élu en janvier 1920 contre Clemenceau, il fut contraint de démissionner après seulement sept mois pour raisons de santé, suite à plusieurs incidents révélant ses troubles nerveux, dont sa chute d'un train de nuit en pyjama.",
+   events:"Chute du train (24 mai 1920) · Démission (21 sept. 1920)"},
+
+  {id:12, name:"Alexandre Millerand", epithet:"",
+   rep:"IIIe République", start:1920, end:1924,
+   wikiTitle:"Alexandre_Millerand",
+   party:"Centre droit",
+   desc:"Ancien socialiste reconverti au conservatisme, il tenta de renforcer le pouvoir exécutif. La victoire du Cartel des Gauches aux élections de 1924 le contraignit à démissionner.",
+   events:"Occupation de la Ruhr (1923) · Cartel des Gauches (1924) · Démission"},
+
+  {id:13, name:"Gaston Doumergue", epithet:"Gastounet",
+   rep:"IIIe République", start:1924, end:1931,
+   wikiTitle:"Gaston_Doumergue",
+   party:"Radical",
+   desc:"Premier président protestant et premier méridional à l'Élysée, son septennat coïncida avec la prospérité des Années folles et la stabilisation du franc par Poincaré en 1926.",
+   events:"Stabilisation du franc (1926) · Années folles · Exposition coloniale (1931)"},
+
+  {id:14, name:"Paul Doumer", epithet:"",
+   rep:"IIIe République", start:1931, end:1932,
+   wikiTitle:"Paul_Doumer",
+   party:"Républicain gauche",
+   desc:"Élu à 74 ans après une longue carrière politique et coloniale, il fut assassiné lors d'une foire du livre à Paris par l'émigré russe Pavel Gorguloff, après seulement un an de mandat.",
+   events:"Assassinat à la foire du livre (6 mai 1932)"},
+
+  {id:15, name:"Albert Lebrun", epithet:"",
+   rep:"IIIe République", start:1932, end:1940,
+   wikiTitle:"Albert_Lebrun",
+   party:"Républicain gauche",
+   desc:"Dernier président de la IIIe République, il ne put empêcher ni la défaite de juin 1940 ni le vote des pleins pouvoirs à Pétain. Ne démissionnant jamais formellement, il laissa sa place dans l'ambiguïté constitutionnelle.",
+   events:"Front populaire (1936) · Déclaration de guerre (sept. 1939) · Armistice (1940)"},
+
+  // ── IVe RÉPUBLIQUE ──
+  {id:16, name:"Vincent Auriol", epithet:"Vieux Vincent",
+   rep:"IVe République", start:1947, end:1954,
+   wikiTitle:"Vincent_Auriol",
+   party:"SFIO (socialiste)",
+   desc:"Premier président de la IVe République, socialiste de conviction, il joua un rôle d'arbitre actif malgré la faiblesse institutionnelle de sa fonction, présidant à la décolonisation progressive et au début de la Guerre froide.",
+   events:"Plan Marshall (1947) · Début guerre d'Indochine · Construction européenne"},
+
+  {id:17, name:"René Coty", epithet:"",
+   rep:"IVe République", start:1954, end:1959,
+   wikiTitle:"René_Coty",
+   party:"Centre droit",
+   desc:"Dernier président de la IVe République, il joua un rôle décisif en appelant de Gaulle au pouvoir en mai 1958, déclarant : « De Gaulle ou la guerre civile ». Il transmit la présidence dès janvier 1959.",
+   events:"Guerre d'Algérie · Appel à de Gaulle (1958) · Constitution Ve République"},
+
+  // ── Ve RÉPUBLIQUE ──
+  {id:18, name:"Charles de Gaulle", epithet:"le Général",
+   rep:"Ve République", start:1959, end:1969,
+   wikiTitle:"Charles_de_Gaulle",
+   party:"Gaulliste (UNR/UDR)",
+   desc:"Fondateur de la Ve République, libérateur de la France en 1944, il donna à la France une nouvelle constitution renforçant l'exécutif, l'indépendance nucléaire et une politique étrangère souveraine. Il démissionna après le « Non » au référendum de 1969.",
+   events:"Constitution Ve République (1958) · Indépendance de l'Algérie (1962) · Mai 68 · Démission (1969)"},
+
+  {id:19, name:"Georges Pompidou", epithet:"le Bâtisseur",
+   rep:"Ve République", start:1969, end:1974,
+   wikiTitle:"Georges_Pompidou",
+   party:"Gaulliste (UDR)",
+   desc:"Ancien Premier ministre de de Gaulle, il modernisa la France par une politique industrielle volontariste et commanda le Centre Pompidou à Paris. Il mourut en fonction de la maladie de Waldenström.",
+   events:"Adhésion du Royaume-Uni à la CEE (1973) · Choc pétrolier (1973) · Mort en fonction (2 avr. 1974)"},
+
+  {id:20, name:"Valéry Giscard d'Estaing", epithet:"VGE",
+   rep:"Ve République", start:1974, end:1981,
+   wikiTitle:"Valéry_Giscard_d'Estaing",
+   party:"Centre droit (RI / UDF)",
+   desc:"Élu à 48 ans, le plus jeune président de l'époque, il modernisa la société française : majorité à 18 ans, dépénalisation de l'avortement (loi Veil), divorce par consentement mutuel. Il perdit face à Mitterrand en 1981.",
+   events:"Loi Veil — IVG (1975) · Majorité à 18 ans (1974) · Crise économique · Défaite en 1981"},
+
+  {id:21, name:"François Mitterrand", epithet:"le Sphinx",
+   rep:"Ve République", start:1981, end:1995,
+   wikiTitle:"François_Mitterrand",
+   party:"Parti socialiste (PS)",
+   desc:"Premier président socialiste de la Ve République, il abolit la peine de mort, nationalisa de grands groupes industriels, puis traversa deux cohabitations avec la droite. Il régna 14 ans sur la présidence.",
+   events:"Abolition de la peine de mort (1981) · Deux cohabitations · Tunnel sous la Manche (1994)"},
+
+  {id:22, name:"Jacques Chirac", epithet:"le Bulldozer",
+   rep:"Ve République", start:1995, end:2007,
+   wikiTitle:"Jacques_Chirac",
+   party:"Gaulliste (RPR / UMP)",
+   desc:"Il refusa l'engagement militaire français en Irak (2003), décision historique saluée dans le monde entier. Son second mandat fut marqué par la cohabitation avec Jospin puis par le « Non » français au traité constitutionnel européen (2005).",
+   events:"Refus guerre en Irak (2003) · Non au référendum européen (2005) · Dissolution (1997)"},
+
+  {id:23, name:"Nicolas Sarkozy", epithet:"Sarko",
+   rep:"Ve République", start:2007, end:2012,
+   wikiTitle:"Nicolas_Sarkozy",
+   party:"UMP",
+   desc:"Président hyperactif, il réforma les institutions, assuma la présidence de l'UE pendant la crise financière de 2008, intervint en Libye (2011) et conduisit de profondes réformes économiques et sociales controversées.",
+   events:"Crise financière mondiale (2008) · Présidence française de l'UE · Révision constitutionnelle (2008)"},
+
+  {id:24, name:"François Hollande", epithet:"M. Normal",
+   rep:"Ve République", start:2012, end:2017,
+   wikiTitle:"François_Hollande",
+   party:"Parti socialiste (PS)",
+   desc:"Premier président de la Ve République à renoncer à briguer un second mandat, son quinquennat fut marqué par les attentats terroristes de 2015, l'ouverture du mariage aux couples de même sexe et l'Accord de Paris sur le climat.",
+   events:"Mariage pour tous (2013) · Attentats de Paris (janv. & nov. 2015) · COP21 — Accord de Paris (2015)"},
+
+  {id:25, name:"Emmanuel Macron", epithet:"Jupiter",
+   rep:"Ve République", start:2017, end:null,
+   wikiTitle:"Emmanuel_Macron",
+   party:"En Marche / Renaissance",
+   current:true,
+   desc:"Élu à 39 ans, plus jeune président de la Ve République, fondateur du mouvement En Marche, il fut réélu en 2022. Son mandat fut traversé par la crise des Gilets Jaunes, la pandémie de Covid-19 et la réforme controversée des retraites.",
+   events:"Crise des Gilets Jaunes (2018) · Pandémie Covid-19 (2020) · Réforme des retraites (2023)"},
+];
+
+const REPUBLIC_COLORS = {
+  "IIe République":  {bg:"rgba(122,47,160,0.15)", border:"rgba(122,47,160,0.4)", text:"#D4A0F5"},
+  "IIIe République": {bg:"rgba(26,62,122,0.15)",  border:"rgba(26,62,122,0.4)",  text:"#7EB0E3"},
+  "IVe République":  {bg:"rgba(26,107,80,0.15)",  border:"rgba(26,107,80,0.4)",  text:"#80E0C0"},
+  "Ve République":   {bg:"rgba(155,28,28,0.15)",  border:"rgba(155,28,28,0.4)",  text:"#F5A0A0"},
+};
+
+// ══════════════════════════════════════════════
+//  WIKIPEDIA IMAGE LOADER — cache localStorage
+// ══════════════════════════════════════════════
+const CACHE_PFX = "pres_img_";
+const CACHE_TTL  = 7 * 24 * 3600 * 1000;
+
+function getCached(title) {
+  try {
+    const raw = localStorage.getItem(CACHE_PFX + title);
+    if (!raw) return null;
+    const {url, ts} = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(CACHE_PFX + title); return null; }
+    return url;
+  } catch(e) { return null; }
+}
+
+function setCached(title, url) {
+  try { localStorage.setItem(CACHE_PFX + title, JSON.stringify({url, ts:Date.now()})); } catch(e) {}
+}
+
+async function getWikiImg(wikiTitle) {
+  const cached = getCached(wikiTitle);
+  if (cached) return cached;
+  try {
+    const r = await fetch(
+      `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
+      {headers:{"Accept":"application/json"}}
+    );
+    if (!r.ok) return null;
+    const d = await r.json();
+    const url = d.thumbnail?.source || d.originalimage?.source || null;
+    if (url) setCached(wikiTitle, url);
+    return url;
+  } catch(e) { return null; }
+}
+
+function applyPortrait(wikiTitle, imgEl) {
+  if (!imgEl) return;
+  getWikiImg(wikiTitle).then(url => {
+    if (!url || !imgEl) return;
+    imgEl.src = url;
+    imgEl.onload  = () => imgEl.classList.add("loaded");
+    imgEl.onerror = () => { imgEl.style.display = "none"; };
+  });
+}
+
+// ══════════════════════════════════════════════
+//  UI
+// ══════════════════════════════════════════════
+let activeRep   = "Tous";
+let searchQuery = "";
+
+function buildFilters() {
+  const reps = ["Tous", ...new Set(PRESIDENTS.map(p => p.rep))];
+  const c = document.getElementById("repFilters");
+  c.innerHTML = "";
+  reps.forEach(r => {
+    const btn = document.createElement("button");
+    btn.className = "pill" + (r==="Tous"?" all":"") + (r===activeRep?" active":"");
+    if (r !== "Tous") btn.dataset.rep = r;
+    btn.textContent = r;
+    btn.onclick = () => { activeRep = r; buildFilters(); renderList(); };
+    c.appendChild(btn);
+  });
+}
+
+function norm(s) { return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+
+function renderList() {
+  const list = document.getElementById("presList");
+  const q = norm(searchQuery).trim();
+
+  const filtered = PRESIDENTS.filter(p => {
+    if (activeRep !== "Tous" && p.rep !== activeRep) return false;
+    if (q) return norm(p.name + " " + p.epithet + " " + p.party).includes(q);
+    return true;
+  });
+
+  document.getElementById("countBar").textContent =
+    filtered.length === PRESIDENTS.length
+      ? `${PRESIDENTS.length} présidents · de Louis-Napoléon Bonaparte à Emmanuel Macron`
+      : `${filtered.length} résultat${filtered.length > 1 ? "s" : ""}`;
+
+  list.innerHTML = "";
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><span>🏛</span>Aucun président trouvé</div>`;
+    return;
+  }
+
+  const showGroups = activeRep === "Tous" && !q;
+  if (showGroups) {
+    const groups = {};
+    filtered.forEach(p => { if (!groups[p.rep]) groups[p.rep]=[]; groups[p.rep].push(p); });
+    Object.entries(groups).forEach(([rep, pres]) => {
+      const sec = document.createElement("div");
+      sec.className = "rep-section";
+      sec.innerHTML = `<div class="rep-header"><div class="rep-line"></div><span class="rep-label">${rep}</span><div class="rep-line"></div></div>`;
+      pres.forEach((p,i) => sec.appendChild(buildCard(p,i)));
+      list.appendChild(sec);
+    });
+  } else {
+    filtered.forEach((p,i) => list.appendChild(buildCard(p,i)));
+  }
+}
+
+function durStr(p) {
+  const endY = p.current ? new Date().getFullYear() : p.end;
+  const d = endY - p.start;
+  return `${d} an${d>1?"s":""}`;
+}
+
+function buildCard(p, idx) {
+  const card = document.createElement("div");
+  card.className = "pres-card";
+  card.dataset.rep = p.rep;
+  card.style.animationDelay = (idx * 0.03) + "s";
+  const endLabel = p.current ? "en cours" : p.end;
+
+  card.innerHTML = `
+    <div class="portrait-wrap">
+      <div class="portrait-placeholder">🏛</div>
+      <img alt="${p.name}" loading="lazy">
+    </div>
+    <div class="pres-info">
+      <div class="pres-num">Nº ${p.id}</div>
+      <div class="pres-name">${p.name}</div>
+      ${p.epithet ? `<div class="pres-epithet">${p.epithet}</div>` : ""}
+      <div class="pres-mandat"><span>${p.start} – ${endLabel}</span> &nbsp;·&nbsp; ${durStr(p)}</div>
+    </div>
+    <div class="pres-arrow">›</div>
+  `;
+
+  applyPortrait(p.wikiTitle, card.querySelector("img"));
+  card.onclick = () => openModal(p);
+  return card;
+}
+
+function openModal(p) {
+  const dc = REPUBLIC_COLORS[p.rep] || REPUBLIC_COLORS["Ve République"];
+  const endLabel = p.current ? "En cours" : p.end;
+
+  document.getElementById("modalContent").innerHTML = `
+    <div class="modal-portrait-wrap">
+      <div class="modal-img-loading" id="mSpinner"><div class="spinner"></div></div>
+      <div class="modal-portrait-placeholder" id="mPh">🏛</div>
+      <img id="mImg" alt="${p.name}">
+    </div>
+    <div class="modal-body">
+      <div class="modal-rep-badge" style="background:${dc.bg};border-color:${dc.border};color:${dc.text};">${p.rep}</div>
+      <div class="modal-name">${p.name}</div>
+      ${p.epithet ? `<div class="modal-epithet">${p.epithet}</div>` : `<div style="margin-bottom:16px"></div>`}
+      <div class="modal-stats">
+        <div class="stat-box"><div class="stat-label">Début de mandat</div><div class="stat-value">${p.start}</div></div>
+        <div class="stat-box"><div class="stat-label">Fin de mandat</div><div class="stat-value">${endLabel}</div></div>
+        <div class="stat-box"><div class="stat-label">Durée</div><div class="stat-value">${durStr(p)}</div></div>
+        <div class="stat-box"><div class="stat-label">Parti</div><div class="stat-value" style="font-size:12px;line-height:1.4">${p.party||"—"}</div></div>
+      </div>
+      ${p.desc  ? `<p class="modal-desc">${p.desc}</p>` : ""}
+      ${p.events? `<div class="stat-box" style="margin-bottom:16px"><div class="stat-label">Événements clés</div><div class="stat-value" style="font-size:13px;line-height:1.6">${p.events}</div></div>` : ""}
+      <button class="modal-close" onclick="closeModal()">🏛 Fermer 🏛</button>
+    </div>
+  `;
+
+  getWikiImg(p.wikiTitle).then(url => {
+    const spinner = document.getElementById("mSpinner");
+    const ph      = document.getElementById("mPh");
+    const img     = document.getElementById("mImg");
+    if (spinner) spinner.style.display = "none";
+    if (url && img) {
+      img.src = url;
+      img.onload  = () => { img.classList.add("loaded"); if(ph) ph.style.display="none"; };
+      img.onerror = () => { img.style.display = "none"; };
+    }
+  });
+
+  document.getElementById("modalBackdrop").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById("modalBackdrop")) return;
+  document.getElementById("modalBackdrop").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("searchInput").addEventListener("input", function() {
+  searchQuery = this.value;
+  renderList();
+});
+
+function openSettings() {
+  document.getElementById("settingsBackdrop").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeSettings(e) {
+  if (e && e.target !== document.getElementById("settingsBackdrop")) return;
+  document.getElementById("settingsBackdrop").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function openAppStore(appId) {
+  if (appId === 'id_rois') return; // à mettre à jour avec le vrai ID
+  window.location.href = `https://apps.apple.com/fr/app/${appId}`;
+}
+
+buildFilters();
+renderList();
+</script>
+</body>
+</html>
